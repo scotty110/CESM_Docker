@@ -38,11 +38,11 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 # Conda install python version which works
 RUN conda install python=3.8
 
-# Turn off SSL verification for SVN
+# SSL verification for SVN, proving difficult
 RUN echo "[global]" > /etc/subversion/servers && \
     echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /etc/subversion/servers && \
-    echo "ssl-trust-default-ca = no" >> /etc/subversion/servers && \
-    echo "ssl-ignore-unknown-ca = yes" >> /etc/subversion/servers
+    echo "ssl-trust-default-ca = yes" >> /etc/subversion/servers && \
+    echo "ssl-ignore-unknown-ca = no" >> /etc/subversion/servers
 
 # Download CESM
 WORKDIR /opt
@@ -59,4 +59,6 @@ RUN rm -r manage_externals
 RUN git clone https://github.com/ESMCI/manage_externals.git
 
 # Get dependencies
-RUN ./manage_externals/checkout_externals
+RUN cat /etc/subversion/servers
+RUN svn checkout https://svn-ccsm-models.cgd.ucar.edu/tools/proc_atm/chem_proc/release_tags/chem_proc5_0_03_rel
+#RUN ./manage_externals/checkout_externals
