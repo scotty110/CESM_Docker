@@ -43,7 +43,9 @@ RUN mkdir -p /root/.subversion && \
     echo "[global]" > /root/.subversion/servers && \
     echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /root/.subversion/servers && \
     echo "ssl-trust-default-ca = no" >> /root/.subversion/servers && \
-    echo "ssl-ignore-unknown-ca = yes" >> /root/.subversion/servers
+    echo "ssl-ignore-unknown-ca = yes" >> /root/.subversion/servers && \
+    echo "ssl-trust-default-ca = no" > /root/.subversion/servers && \
+    echo "ssl-ignore-unknown-ca = yes" > /root/.subversion/servers
 
 # Download CESM
 WORKDIR /opt
