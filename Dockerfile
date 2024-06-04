@@ -39,11 +39,10 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 RUN conda install python=3.8
 
 # Turn off SSL verification for SVN
-RUN mkdir -p /root/.subversion && \
-    echo "[global]" > /root/.subversion/servers && \
-    echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /root/.subversion/servers && \
-    echo "ssl-trust-default-ca = no" >> /root/.subversion/servers && \
-    echo "ssl-ignore-unknown-ca = yes" >> /root/.subversion/servers
+RUN echo "[global]" > /etc/subversion/servers && \
+    echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /etc/subversion/servers && \
+    echo "ssl-trust-default-ca = no" >> /etc/subversion/servers && \
+    echo "ssl-ignore-unknown-ca = yes" >> /etc/subversion/servers
 
 # Download CESM
 WORKDIR /opt

@@ -38,23 +38,18 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 # Conda install python version which works
 RUN conda install python=3.8
 
-# Fix SVM Certs
-COPY svn-ccsm-cert.crt /usr/local/share/ca-certificates
-RUN chmod 644 /usr/local/share/ca-certificates/svn-ccsm-cert.crt
-
-# Update CA certificates
-RUN update-ca-certificates
-
-# Configure SVN to use the certificate
+# Turn off SSL verification for SVN
 RUN mkdir -p /root/.subversion && \
     echo "[global]" > /root/.subversion/servers && \
-    echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /root/.subversion/servers
+    echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /root/.subversion/servers && \
+    echo "ssl-trust-default-ca = no" >> /root/.subversion/servers && \
+    echo "ssl-ignore-unknown-ca = yes" >> /root/.subversion/servers
 
 # Download CESM
 WORKDIR /opt
 RUN git clone https://github.com/escomp/cesm.git my_cesm_sandbox
 
-# Config
+# Configure CESM
 WORKDIR /opt/my_cesm_sandbox
 RUN git fetch --all
 RUN git checkout release-cesm2.1.2
@@ -64,6 +59,5 @@ RUN git pull origin release-cesm2.1.2
 RUN rm -r manage_externals
 RUN git clone https://github.com/ESMCI/manage_externals.git
 
-# Get Deps
+# Get dependencies
 RUN ./manage_externals/checkout_externals
-
