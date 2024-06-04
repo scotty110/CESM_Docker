@@ -38,6 +38,13 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 # Conda install python version which works
 RUN conda install python=3.8
 
+# Add cert
+COPY svn-ccsm-cert.crt /usr/local/share/ca-certificates
+RUN chmod 644 /usr/local/share/ca-certificates/svn-ccsm-cert.crt
+
+# Update CA certificates
+RUN update-ca-certificates
+
 # SSL verification for SVN, proving difficult
 RUN echo "[global]" > /etc/subversion/servers && \
     echo "ssl-authority-files = /etc/ssl/certs/ca-certificates.crt" >> /etc/subversion/servers && \
