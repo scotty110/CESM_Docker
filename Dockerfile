@@ -70,6 +70,4 @@ RUN rm -r manage_externals
 RUN git clone https://github.com/ESMCI/manage_externals.git
 
 # Get dependencies
-RUN cat /etc/subversion/servers
-#RUN svn checkout https://svn-ccsm-models.cgd.ucar.edu/tools/proc_atm/chem_proc/release_tags/chem_proc5_0_03_rel
 RUN ./manage_externals/checkout_externals
