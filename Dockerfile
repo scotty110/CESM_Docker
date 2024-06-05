@@ -62,8 +62,8 @@ RUN git clone https://github.com/escomp/cesm.git my_cesm_sandbox
 # Configure CESM
 WORKDIR /opt/my_cesm_sandbox
 RUN git fetch --all
-RUN git checkout release-cesm2.1.2
-RUN git pull origin release-cesm2.1.2
+RUN git checkout release-cesm2.1.5
+RUN git pull origin release-cesm2.1.5
 
 # Fix manage_externals
 RUN rm -r manage_externals
