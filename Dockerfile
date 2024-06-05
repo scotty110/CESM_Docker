@@ -38,9 +38,13 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 # Conda install python version which works
 RUN conda install python=3.8
 
-# Add cert
+# Add cert ccsm-cert (incommon signed)
 COPY svn-ccsm-cert.crt /usr/local/share/ca-certificates
 RUN chmod 644 /usr/local/share/ca-certificates/svn-ccsm-cert.crt
+
+# Add InCommon
+COPY incommon.crt /usr/local/share/ca-certificates
+RUN chmod 644 /usr/local/share/ca-certificates/incommon.crt
 
 # Update CA certificates
 RUN update-ca-certificates
@@ -67,5 +71,5 @@ RUN git clone https://github.com/ESMCI/manage_externals.git
 
 # Get dependencies
 RUN cat /etc/subversion/servers
-RUN svn checkout https://svn-ccsm-models.cgd.ucar.edu/tools/proc_atm/chem_proc/release_tags/chem_proc5_0_03_rel
-#RUN ./manage_externals/checkout_externals
+#RUN svn checkout https://svn-ccsm-models.cgd.ucar.edu/tools/proc_atm/chem_proc/release_tags/chem_proc5_0_03_rel
+RUN ./manage_externals/checkout_externals

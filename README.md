@@ -14,4 +14,5 @@ Here we present a docker container that runs on both x86 and arm processors?
         Subject: C = US, ST = Colorado, O = University Corporation for Atmospheric Research, CN = *.cgd.ucar.edu
         Subject Public Key Info: ...```
 2. Navigate to [Link](https://uit.stanford.edu/service/ssl/chain) or [Link](https://it.colostate.edu/incommon-certificates/#)
+3. Other potential cert Link: [Link](https://it.colostate.edu/incommon-certificates/#) [From](https://incommon.org/certificates/repository/)
 

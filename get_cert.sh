@@ -8,4 +8,8 @@ echo | openssl s_client -showcerts -servername svn-ccsm-models.cgd.ucar.edu -con
 #openssl x509 -in svn-ccsm-cert.pem -text -noout
 openssl x509 -in svn-ccsm-cert.crt -text -noout
 
+# Get Intermediate
+wget -O incommon.crt "https://spaces.at.internet2.edu/download/attachments/24576265/InCommon%20RSA%20Server%20CA%202.pem?api=v2"
+
+
 
