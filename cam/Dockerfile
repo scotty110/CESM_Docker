@@ -48,6 +48,19 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH ..
 RUN make
 RUN make install
 
+# Install P I/O
+WORKDIR /opt
+RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_6_2.tar.gz && \
+    tar -xzvf pio2_6_2.tar.gz && \
+    rm pio2_6_2.tar.gz && \
+    mv ParallelIO-pio2_6_2 pio
+
+WORKDIR /opt/pio
+RUN mkdir build
+WORKDIR /opt/pio/build
+RUN cmake -DNETCDF_C_INCLUDE_DIR=$NETCDF_PATH ..
+RUN mkdir build
+
 # Set Machine Name
 ENV CIME_MACHINE ubuntu-latest
 ENV USER root
