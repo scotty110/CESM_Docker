@@ -21,7 +21,7 @@ RUN wget https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5_1.14.4.3.tar.gz
 WORKDIR /opt/hdf5
 ENV HDF5_PATH /usr/local/hdf5
 ENV PATH $HDF5_PATH/bin:$PATH
-ENV LD_LIBRARY_PATH $HDF5_DIR/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH $HDF5_PATH/lib:$LD_LIBRARY_PATH
 
 RUN mkdir builds
 WORKDIR /opt/hdf5/builds
@@ -61,40 +61,6 @@ RUN mkdir build
 WORKDIR /opt/netcdf-fortran/build
 
 ENV NETCDF_FORTRAN_PATH /usr/local/netcdf
-#ENV NETCDF_FORTRAN_PATH /usr/local/netcdf_fortran
-#ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_FORTRAN_PATH/lib
-#ENV PATH $NETCDF_FORTRAN_PATH/bin:$PATH
 
-RUN cmake -DNetCDF_ROOT=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
-RUN make
-RUN make install
-
-# Install P I/O
-WORKDIR /opt
-RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_6_2.tar.gz && \
-    tar -xzvf pio2_6_2.tar.gz && \
-    rm pio2_6_2.tar.gz && \
-    mv ParallelIO-pio2_6_2 pio
-
-WORKDIR /opt/pio
-RUN mkdir build
-WORKDIR /opt/pio/build
-
-ENV PIO_PATH /usr/local/pio
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$PIO_PATH/lib
-ENV PATH $PIO_PATH/bin:$PATH
-
-RUN apt update && apt install -y pkg-config
-
-RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DNetCDF_Fortran_PATH=$NETCDF_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH ..
-RUN mkdir build
-
-# Set Machine Name
-ENV CIME_MACHINE ubuntu-latest
-ENV USER root
-
-# Set Openmpi Compiler ENV
-ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
-
-# Configure CAM 
-WORKDIR /opt/my_cesm_sandbox/cime/scripts
+#RUN CFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libs)" ./configure --prefix=$NETCDF_FORTRAN_PATH
+#RUN cmake -DNetCDF_ROOT=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
