@@ -11,7 +11,6 @@ RUN apt-get update && \
     ca-certificates \
     git \
     subversion \
-    python3 \
     cmake \
     build-essential \
     gfortran \
@@ -22,8 +21,22 @@ RUN apt-get update && \
     openssl && \
     apt-get clean
 
-# lnk python3
-RUN ln -s /usr/local/bin/python3 /usr/local/bin/python
+# Install Miniconda
+WORKDIR /opt
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh && \
+    bash miniconda.sh -b -p /opt/miniconda && \
+    rm miniconda.sh
+
+# Set up the conda environment
+ENV PATH="/opt/miniconda/bin:$PATH"
+RUN conda init && \
+    conda config --set auto_activate_base false
+
+# Ensure conda is available in non-interactive shells
+RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
+
+# Conda install python version which works
+RUN conda install python=3.8
 
 # Add cert ccsm-cert (incommon signed)
 COPY svn-ccsm-cert.crt /usr/local/share/ca-certificates
