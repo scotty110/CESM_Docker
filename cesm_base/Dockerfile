@@ -17,6 +17,9 @@ RUN apt-get update && \
     libblas-dev \
     liblapack-dev \
     openmpi-bin \
+    openmpi-common \
+    libopenmpi-dev \
+    libxml-libxml-perl \
     wget \
     openssl && \
     apt-get clean
