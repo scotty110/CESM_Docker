@@ -1,6 +1,12 @@
 # CAM/CESM on Grace Hopper 
 Here we present a docker container that runs on both x86 and arm processors?
 
+## Build
+### Base CESM 
+Base CESM container installes compilers and pulls the needed repos to build and run projects. Note this does not include dependencies like NetCDF (may add later). You can compile for x86 by changing the miniconda package to `Linux-x86_64.sh`. 
+1. `cd ./cesm`
+2. `./build.sh`
+
 ## Download Intermediate Certs
 1. Verify that still using InCommon: `openssl x509 -in svn-ccsm-cert.crt -text -noout`. Should give something like: ```Data:
         Version: 3 (0x2)
