@@ -22,3 +22,6 @@ Base CESM container installes compilers and pulls the needed repos to build and 
 2. Navigate to [Link](https://uit.stanford.edu/service/ssl/chain) or [Link](https://it.colostate.edu/incommon-certificates/#)
 3. Other potential cert Link: [Link](https://it.colostate.edu/incommon-certificates/#) [From](https://incommon.org/certificates/repository/)
 
+[Link](https://github.com/NordicESMhub/containers)
+[Link](https://github.com/NordicESMhub/cesm_docker_libs)
+
