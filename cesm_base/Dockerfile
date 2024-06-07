@@ -24,6 +24,9 @@ RUN apt-get update && \
     openssl && \
     apt-get clean
 
+# MPI 
+ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
+
 # Install Miniconda
 WORKDIR /opt
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh && \

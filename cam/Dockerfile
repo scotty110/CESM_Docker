@@ -48,37 +48,10 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH ..
 RUN make
 RUN make install
 
-# Install P I/O
-WORKDIR /opt
-RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_6_2.tar.gz && \
-    tar -xzvf pio2_6_2.tar.gz && \
-    rm pio2_6_2.tar.gz && \
-    mv ParallelIO-pio2_6_2 pio
-
-WORKDIR /opt/pio
-RUN mkdir build
-WORKDIR /opt/pio/build
-
-ENV PIO_PATH /usr/local/pio
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$PIO_PATH/lib
-ENV PATH $PIO_PATH/bin:$PATH
-
-# Set Openmpi Compiler ENV
-#ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
-
-# Need to run below (get error)
-RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH ..
-
-# Then run to be able to build
-RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF ..
-RUN make
-RUN make install
-
-
 # Set Machine Name
 ENV CIME_MACHINE ubuntu-latest
 ENV USER root
 
 # Configure CAM 
-#WORKDIR /opt/my_cesm_sandbox/cime/scripts
-#RUN mkdir -p /root/cesm/inputdata
+WORKDIR /opt/my_cesm_sandbox/cime/scripts
+RUN mkdir -p /root/cesm/inputdata
