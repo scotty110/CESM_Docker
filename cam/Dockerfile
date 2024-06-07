@@ -4,29 +4,12 @@ FROM cesm:latest
 RUN apt-get update && apt-get install -y \
     curl \
     zlib1g \
-    libcurl4-openssl-dev \
-    mpich
+    libcurl4-openssl-dev 
 
 # MPI Compiler Support
 ENV CC=/usr/bin/mpicc
 ENV FC=/usr/bin/mpif90
 ENV CXX=/usr/bin/mpicxx
-
-# Install SZIP
-WORKDIR /opt
-RUN wget https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz && \
-    tar -zxvf szip-2.1.1.tar.gz && \
-    rm szip-2.1.1.tar.gz && \
-    mv szip-2.1.1 szip
-
-WORKDIR /opt/szip
-ENV SZIP_PATH /usr/local/szip
-RUN mkdir -p $SZIP_PATH
-RUN ./configure --prefix=$SZIP_PATH
-RUN make
-RUN make install
-
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$SZIP_PATH/lib
 
 # Install HDF5
 WORKDIR /opt
@@ -38,11 +21,11 @@ RUN wget https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5_1.14.4.3.tar.gz
 WORKDIR /opt/hdf5
 ENV HDF5_PATH /usr/local/hdf5
 ENV PATH $HDF5_PATH/bin:$PATH
-ENV LD_LIBRARY_PATH $HDF5_PATH/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH $HDF5_DIR/lib:$LD_LIBRARY_PATH
 
 RUN mkdir builds
 WORKDIR /opt/hdf5/builds
-RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON -DSZIP_USE_EXTERNAL=ON -DSZIP_DIR=$SZIP_PATH  ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON ..
 RUN make
 RUN make install
 
@@ -60,24 +43,39 @@ WORKDIR /opt/netcdf-c/build
 ENV NETCDF_PATH /usr/local/netcdf
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_PATH/lib
 ENV PATH $NETCDF_PATH/bin:$PATH
-ENV CPATH $NETCDF_PATH/include:$CPATH
 
-RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH -DSzip_INCLUDE_DIRS=$SZIP_PATH/includes ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH ..
 RUN make
 RUN make install
 
-# Install Fortran NetCDF
+# Install P I/O
 WORKDIR /opt
-RUN wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.6.1.tar.gz && \
-    tar -xzvf v4.6.1.tar.gz && \
-    rm v4.6.1.tar.gz && \
-    mv netcdf-fortran-4.6.1 netcdf-fortran
+RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_6_2.tar.gz && \
+    tar -xzvf pio2_6_2.tar.gz && \
+    rm pio2_6_2.tar.gz && \
+    mv ParallelIO-pio2_6_2 pio
 
-WORKDIR /opt/netcdf-fortran
+WORKDIR /opt/pio
 RUN mkdir build
-WORKDIR /opt/netcdf-fortran/build
+WORKDIR /opt/pio/build
 
-ENV NETCDF_FORTRAN_PATH /usr/local/netcdf
+ENV PIO_PATH /usr/local/pio
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$PIO_PATH/lib
+ENV PATH $PIO_PATH/bin:$PATH
 
-#RUN CFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libs)" ./configure --prefix=$NETCDF_FORTRAN_PATH
-#RUN cmake -DNetCDF_ROOT=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
+# Set Openmpi Compiler ENV
+ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
+
+RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF ..
+#RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF ..
+#RUN make
+#RUN make install
+
+
+# Set Machine Name
+ENV CIME_MACHINE ubuntu-latest
+ENV USER root
+
+# Configure CAM 
+#WORKDIR /opt/my_cesm_sandbox/cime/scripts
+#RUN mkdir -p /root/cesm/inputdata
