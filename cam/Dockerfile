@@ -4,12 +4,29 @@ FROM cesm:latest
 RUN apt-get update && apt-get install -y \
     curl \
     zlib1g \
-    libcurl4-openssl-dev 
+    libcurl4-openssl-dev \
+    mpich
 
 # MPI Compiler Support
 ENV CC=/usr/bin/mpicc
 ENV FC=/usr/bin/mpif90
 ENV CXX=/usr/bin/mpicxx
+
+# Install SZIP
+WORKDIR /opt
+RUN wget https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz && \
+    tar -zxvf szip-2.1.1.tar.gz && \
+    rm szip-2.1.1.tar.gz && \
+    mv szip-2.1.1 szip
+
+WORKDIR /opt/szip
+ENV SZIP_PATH /usr/local/szip
+RUN mkdir -p $SZIP_PATH
+RUN ./configure --prefix=$SZIP_PATH
+RUN make
+RUN make install
+
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$SZIP_PATH/lib
 
 # Install HDF5
 WORKDIR /opt
@@ -25,7 +42,7 @@ ENV LD_LIBRARY_PATH $HDF5_PATH/lib:$LD_LIBRARY_PATH
 
 RUN mkdir builds
 WORKDIR /opt/hdf5/builds
-RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON -DSZIP_USE_EXTERNAL=ON -DSZIP_DIR=$SZIP_PATH  ..
 RUN make
 RUN make install
 
@@ -45,7 +62,7 @@ ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_PATH/lib
 ENV PATH $NETCDF_PATH/bin:$PATH
 ENV CPATH $NETCDF_PATH/include:$CPATH
 
-RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH -DSzip_INCLUDE_DIRS=$SZIP_PATH/includes ..
 RUN make
 RUN make install
 
