@@ -6,3 +6,7 @@ cd test_scam
 
 ./case.setup
 
+./case.build --clean
+
+
+
