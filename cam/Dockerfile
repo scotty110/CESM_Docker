@@ -64,12 +64,15 @@ ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$PIO_PATH/lib
 ENV PATH $PIO_PATH/bin:$PATH
 
 # Set Openmpi Compiler ENV
-ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
+#ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
 
+# Need to run below (get error)
+RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH ..
+
+# Then run to be able to build
 RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF ..
-#RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF ..
-#RUN make
-#RUN make install
+RUN make
+RUN make install
 
 
 # Set Machine Name
