@@ -62,11 +62,12 @@ RUN echo "[global]" > /etc/subversion/servers && \
     echo "ssl-ignore-unknown-ca = no" >> /etc/subversion/servers
 
 # Download CESM
+# https://www.cesm.ucar.edu/models/releases
 WORKDIR /opt
-RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
-    tar -zxvf ./release-cesm2.2.2.tar.gz && \
-    rm release-cesm2.2.2.tar.gz && \
-    mv CESM-release-cesm2.2.2 cesm
+RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.1.5.tar.gz && \
+    tar -zxvf ./release-cesm2.1.5.tar.gz && \
+    rm release-cesm2.1.5.tar.gz && \
+    mv CESM-release-cesm2.1.5 cesm
 
 # Fix manage_externals
 WORKDIR /opt/cesm

@@ -12,11 +12,12 @@ ENV FC=/usr/bin/mpif90
 ENV CXX=/usr/bin/mpicxx
 
 # Install HDF5
+# https://portal.hdfgroup.org/downloads/
 WORKDIR /opt
-RUN wget https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5_1.14.4.3.tar.gz && \
-    tar -xzvf hdf5_1.14.4.3.tar.gz && \
-    rm hdf5_1.14.4.3.tar.gz && \
-    mv hdf5-hdf5_1.14.4.3 hdf5 
+RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-3.tar.gz && \
+    tar -xzvf hdf5-1.14.4-3.tar.gz && \
+    rm hdf5-1.14.4-3.tar.gz && \
+    mv hdf5-1.14.4-3 hdf5 
 
 WORKDIR /opt/hdf5
 ENV HDF5_PATH /usr/local/hdf5
@@ -30,10 +31,11 @@ RUN make
 RUN make install
 
 # Install NetCDF
+# https://downloads.unidata.ucar.edu/netcdf/
 WORKDIR /opt
-RUN wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.2.tar.gz && \
-    tar -xzvf v4.9.2.tar.gz && \
-    rm v4.9.2.tar.gz && \
+RUN wget https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netcdf-c-4.9.2.tar.gz && \
+    tar -xzvf netcdf-c-4.9.2.tar.gz && \
+    rm netcdf-c-4.9.2.tar.gz && \
     mv netcdf-c-4.9.2 netcdf-c
 
 WORKDIR /opt/netcdf-c
