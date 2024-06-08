@@ -49,9 +49,12 @@ RUN make
 RUN make install
 
 # Set Machine Name
+ENV MACH ubuntu-latest
+ENV CESM_ROOT /opt/cesm
 ENV CIME_MACHINE ubuntu-latest
+
 ENV USER root
 
 # Configure CAM 
-WORKDIR /opt/my_cesm_sandbox/cime/scripts
+WORKDIR /opt/cesm/cime/scripts
 RUN mkdir -p /root/cesm/inputdata
