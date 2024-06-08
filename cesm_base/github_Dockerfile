@@ -63,15 +63,17 @@ RUN echo "[global]" > /etc/subversion/servers && \
 
 # Download CESM
 WORKDIR /opt
-RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
-    tar -zxvf ./release-cesm2.2.2.tar.gz && \
-    rm release-cesm2.2.2.tar.gz && \
-    mv CESM-release-cesm2.2.2 cesm
+RUN git clone https://github.com/escomp/cesm.git my_cesm_sandbox
+
+# Configure CESM
+WORKDIR /opt/my_cesm_sandbox
+RUN git fetch --all
+RUN git checkout release-cesm2.1.5
+RUN git pull origin release-cesm2.1.5
 
 # Fix manage_externals
-WORKDIR /opt/cesm
-#RUN rm -r manage_externals
-#RUN git clone https://github.com/ESMCI/manage_externals.git
+RUN rm -r manage_externals
+RUN git clone https://github.com/ESMCI/manage_externals.git
 
 # Get dependencies
 RUN ./manage_externals/checkout_externals
