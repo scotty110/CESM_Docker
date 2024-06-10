@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM ubuntu:focal
+FROM ubuntu:latest
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -64,22 +64,18 @@ RUN echo "[global]" > /etc/subversion/servers && \
 # Download CESM
 # https://www.cesm.ucar.edu/models/releases
 WORKDIR /opt
-RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.1.5.tar.gz && \
-    tar -zxvf ./release-cesm2.1.5.tar.gz && \
-    rm release-cesm2.1.5.tar.gz && \
-    mv CESM-release-cesm2.1.5 cesm
+#RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.1.5.tar.gz && \
+#    tar -zxvf ./release-cesm2.1.5.tar.gz && \
+#    rm release-cesm2.1.5.tar.gz && \
+#    mv CESM-release-cesm2.1.5 cesm
 
 # Install Dev, issue with gnu compiler broke in 2.1
-#RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
-#    tar -zxvf ./release-cesm2.2.2.tar.gz && \
-#    rm release-cesm2.2.2.tar.gz && \
-#    mv CESM-release-cesm2.2.2 cesm
+RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
+    tar -zxvf ./release-cesm2.2.2.tar.gz && \
+    rm release-cesm2.2.2.tar.gz && \
+    mv CESM-release-cesm2.2.2 cesm
 
 
-# Fix manage_externals
+# Get Deps
 WORKDIR /opt/cesm
-#RUN rm -r manage_externals
-#RUN git clone https://github.com/ESMCI/manage_externals.git
-
-# Get dependencies
 RUN ./manage_externals/checkout_externals
