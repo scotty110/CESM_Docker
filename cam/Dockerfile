@@ -85,28 +85,9 @@ WORKDIR /opt/netcdf-fortran
 RUN mkdir build
 WORKDIR /opt/netcdf-fortran/build
 
-ENV NETCDF_FORTRAN_PATH /usr/local/netcdf
 ENV NETCDF_FORTRAN_PATH /usr/local/netcdf_fortran
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_FORTRAN_PATH/lib
 ENV PATH $NETCDF_FORTRAN_PATH/bin:$PATH
 
-RUN cmake -DNetCDF_ROOT=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
-RUN make
-RUN make install
-
-
-
-# Set Machine Name
-ENV MACH mac  
-ENV CESM_ROOT /opt/cesm
-ENV CIME_MACHINE mac
-
-ENV USER root
-
-# Move Mac Config
-#COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
-COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
-
-# Configure CAM 
-WORKDIR /opt/cesm/cime/scripts
-RUN mkdir -p /root/cesm/inputdata
+##RUN cmake -DNetCDF_ROOT=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
+RUN cmake -DNetCDF_DIR=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
