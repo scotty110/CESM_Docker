@@ -50,12 +50,39 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH ..
 RUN make
 RUN make install
 
+# Make PIO Parallel I/0
+# https://www2.cesm.ucar.edu/models/pio/
+WORKDIR /opt
+RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz && \
+    tar -xzvf pio2_3_1.tar.gz && \
+    rm pio2_3_1.tar.gz && \
+    mv ParallelIO-pio2_3_1 pio 
+
+WORKDIR /opt/pio
+RUN mkdir build
+WORKDIR /opt/pio/build
+
+ENV PIO_PATH /usr/local/pio
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$PIO_PATH/lib
+
+RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF .. 
+RUN make
+RUN make install
+
+
 # Set Machine Name
-ENV MACH ubuntu-latest
+ENV MACH mac  
 ENV CESM_ROOT /opt/cesm
-ENV CIME_MACHINE ubuntu-latest
+ENV CIME_MACHINE mac
 
 ENV USER root
+
+# Move Mac Config
+#COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
+COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
+
+# REMOVE
+RUN apt update && apt install -y vim
 
 # Configure CAM 
 WORKDIR /opt/cesm/cime/scripts

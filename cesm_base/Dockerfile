@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM ubuntu:latest
+FROM ubuntu:focal
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -13,7 +13,7 @@ RUN apt-get update && \
     subversion \
     cmake \
     build-essential \
-    gfortran \
+    gfortran-8 \
     libblas-dev \
     liblapack-dev \
     openmpi-bin \
@@ -68,6 +68,13 @@ RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.1.5.tar.
     tar -zxvf ./release-cesm2.1.5.tar.gz && \
     rm release-cesm2.1.5.tar.gz && \
     mv CESM-release-cesm2.1.5 cesm
+
+# Install Dev, issue with gnu compiler broke in 2.1
+#RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
+#    tar -zxvf ./release-cesm2.2.2.tar.gz && \
+#    rm release-cesm2.2.2.tar.gz && \
+#    mv CESM-release-cesm2.2.2 cesm
+
 
 # Fix manage_externals
 WORKDIR /opt/cesm

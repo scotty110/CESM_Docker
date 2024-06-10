@@ -1,4 +1,13 @@
 # Weblink: https://www.cesm.ucar.edu/models/simple/scam
+# https://bb.cgd.ucar.edu/cesm/threads/cime-models-require-netcdf-in-pio-build.5064/
+
+#########
+# Notes #
+#########
+http://esmci.github.io/cime/versions/cesm2.2/html/users_guide/machine.html#config-machines-xml-machine-specific-file
+
+#########
+#########
 
 # Need to edit: ../config/cesm/machines/config_machines.xml
 ./create_newcase --case test_scam --compset FSCAM --res T42_T42 --user-mods-dir ../../components/cam/cime_config/usermods_dirs/scam_arm95
