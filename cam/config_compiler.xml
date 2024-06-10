@@ -1,26 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config_compilers version="2.0">
 
- <compiler COMPILER="gnu" MACH="mac">
-   <FFLAGS>
-     <append> -fallow-argument-mismatch </append>
-   </FFLAGS>
- </compiler>
-
- <compiler MACH="mac">
-   <SLIBS>
-     <append>-L$(NETCDF_PATH)/lib -lnetcdff -L$(NETCDF_PATH)/lib -lnetcdf -Wl,-rpath -Wl,$(NETCDF_PATH)/lib</append>
-   </SLIBS>
- </compiler>
-
 <compiler MACH="mac" COMPILER="gnu">
   <NETCDF_PATH>$ENV{NETCDF_PATH}</NETCDF_PATH>
   <SLIBS>
      <append> $SHELL{${NETCDF_PATH}/bin/nc-config --flibs}</append>
   </SLIBS>
-  <MPICC>mpiicc</MPICC>
-  <MPICXX>mpiicpc</MPICXX>
-  <MPIFC>mpiifort</MPIFC>
+  <MPICC>mpicc</MPICC>
+  <MPICXX>mpicpc</MPICXX>
+  <MPIFC>mpifort</MPIFC>
 </compiler>
 
 </config_compilers>
