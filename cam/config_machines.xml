@@ -5,9 +5,7 @@
     <DESC>
       Config for grace hopper machine?
     </DESC>
-    <NODENAME_REGEX/>
     <OS>LINUX</OS>
-    <PROXY/>
     <COMPILERS>gnu</COMPILERS>
     <MPILIBS>openmpi</MPILIBS>
     <PROJECT>none</PROJECT>

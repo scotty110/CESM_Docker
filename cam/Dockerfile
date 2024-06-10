@@ -69,8 +69,8 @@ RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INST
 RUN make
 RUN make install
 
-# Actually building CESM requires gfortran-9.4
-RUN apt remove gfortran && apt install -y gfortran-8 vim
+# Install VIM
+RUN apt update && apt install -y vim
 
 # Set Machine Name
 ENV MACH mac  
