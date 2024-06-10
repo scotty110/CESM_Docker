@@ -13,7 +13,7 @@ RUN apt-get update && \
     subversion \
     cmake \
     build-essential \
-    gfortran-8 \
+    gfortran \
     libblas-dev \
     liblapack-dev \
     openmpi-bin \

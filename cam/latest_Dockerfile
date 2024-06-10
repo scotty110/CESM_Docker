@@ -69,8 +69,6 @@ RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INST
 RUN make
 RUN make install
 
-# Actually building CESM requires gfortran-9.4
-RUN apt remove gfortran && apt install -y gfortran-8 vim
 
 # Set Machine Name
 ENV MACH mac  
@@ -82,6 +80,9 @@ ENV USER root
 # Move Mac Config
 #COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
 COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
+
+# REMOVE
+RUN apt update && apt install -y vim
 
 # Configure CAM 
 WORKDIR /opt/cesm/cime/scripts

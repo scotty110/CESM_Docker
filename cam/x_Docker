@@ -14,10 +14,10 @@ ENV CXX=/usr/bin/mpicxx
 # Install HDF5
 # https://portal.hdfgroup.org/downloads/
 WORKDIR /opt
-RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-3.tar.gz && \
-    tar -xzvf hdf5-1.14.4-3.tar.gz && \
-    rm hdf5-1.14.4-3.tar.gz && \
-    mv hdf5-1.14.4-3 hdf5 
+RUN wget https://hdf-wordpress-1.s3.amazonaws.com/wp-content/uploads/manual/HDF5/HDF5_1_12_3/src/hdf5-1.12.3.tar.gz && \
+    tar -xzvf hdf5-1.12.3.tar.gz && \
+    rm hdf5-1.12.3.tar.gz && \
+    mv hdf5-1.12.3 hdf5 
 
 WORKDIR /opt/hdf5
 ENV HDF5_PATH /usr/local/hdf5
@@ -26,7 +26,7 @@ ENV LD_LIBRARY_PATH $HDF5_DIR/lib:$LD_LIBRARY_PATH
 
 RUN mkdir builds
 WORKDIR /opt/hdf5/builds
-RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON -DHDF5_ENABLE_Z_LIB_SUPPORT=ON ..
 RUN make
 RUN make install
 
@@ -69,8 +69,6 @@ RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INST
 RUN make
 RUN make install
 
-# Actually building CESM requires gfortran-9.4
-RUN apt remove gfortran && apt install -y gfortran-8 vim
 
 # Set Machine Name
 ENV MACH mac  
@@ -82,6 +80,9 @@ ENV USER root
 # Move Mac Config
 #COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
 COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
+
+# REMOVE
+RUN apt update && apt install -y vim
 
 # Configure CAM 
 WORKDIR /opt/cesm/cime/scripts
