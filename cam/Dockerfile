@@ -100,7 +100,7 @@ ENV CIME_MACHINE mac
 ENV USER root
 
 # Move Mac Config
-#COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
+COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
 COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
 
 # Configure CAM
