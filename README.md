@@ -1,6 +1,11 @@
 # CAM/CESM on Grace Hopper 
 Here we present a docker container that runs on both x86 and arm processors?
 
+<div style="text-align: center;">
+  <img src="images/egg.heic" style="width:50%;">
+  <p><em>This Docker Container is a Faberge Egge</em></p>
+</div>
+
 ## Build
 ### Base CESM 
 Base CESM container installes compilers and pulls the needed repos to build and run projects. Note this does not include dependencies like NetCDF (may add later). You can compile for x86 by changing the miniconda package to `Linux-x86_64.sh`. 
