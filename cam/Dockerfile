@@ -89,5 +89,9 @@ ENV NETCDF_FORTRAN_PATH /usr/local/netcdf_fortran
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_FORTRAN_PATH/lib
 ENV PATH $NETCDF_FORTRAN_PATH/bin:$PATH
 
-##RUN cmake -DNetCDF_ROOT=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
-RUN cmake -DNetCDF_DIR=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
+#RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir --libs)" ./configure
+#RUN cmake -DNetCDF_DIR=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
+#RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir --libs)" ./configure --prefix=$NETCDF_FORTRAN_PATH --disable-dependency-tracking
+RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir)" ./configure --prefix=$NETCDF_FORTRAN_PATH --disable-dependency-tracking
+RUN make
+RUN make install
