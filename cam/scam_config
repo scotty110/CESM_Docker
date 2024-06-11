@@ -13,7 +13,7 @@ http://esmci.github.io/cime/versions/cesm2.2/html/users_guide/machine.html#confi
 #./create_newcase --case test_scam --compset FSCAM --res T42_T42 --user-mods-dir ../../components/cam/cime_config/usermods_dirs/scam_arm95
 ./create_newcase --case test_FHIST --res f09_f09_mg17 --compset FHIST
 
-cd test_scam
+cd ./test_FHIST
 
 ./case.setup
 

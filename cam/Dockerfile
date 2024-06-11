@@ -30,7 +30,7 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON ..
 RUN make
 RUN make install
 
-# Install NetCDF
+# Install NetCDF-C
 # https://downloads.unidata.ucar.edu/netcdf/
 WORKDIR /opt
 RUN wget https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netcdf-c-4.9.2.tar.gz && \
@@ -42,11 +42,11 @@ WORKDIR /opt/netcdf-c
 RUN mkdir build
 WORKDIR /opt/netcdf-c/build
 
-ENV NETCDF_PATH /usr/local/netcdf
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_PATH/lib
-ENV PATH $NETCDF_PATH/bin:$PATH
+ENV NETCDF_C_PATH /usr/local/netcdf
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_C_PATH/lib
+ENV PATH $NETCDF_C_PATH/bin:$PATH
 
-RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_PATH ..
+RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_C_PATH ..
 RUN make
 RUN make install
 
@@ -65,7 +65,8 @@ WORKDIR /opt/pio/build
 ENV PIO_PATH /usr/local/pio
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$PIO_PATH/lib
 
-RUN cmake -DNetCDF_C_PATH=$NETCDF_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF .. 
+#RUN cmake -DNetCDF_C_PATH=$NETCDF_C_PATH -DPNetCDF_PATH=$PNETCDF_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF .. 
+RUN cmake -DNetCDF_C_PATH=$NETCDF_C_PATH -DCMAKE_INSTALL_PREFIX=$PIO_PATH -DPIO_ENABLE_FORTRAN=OFF .. 
 RUN make
 RUN make install
 
@@ -82,16 +83,26 @@ RUN wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.6.1.tar.
     mv netcdf-fortran-4.6.1 netcdf-fortran
 
 WORKDIR /opt/netcdf-fortran
-RUN mkdir build
-WORKDIR /opt/netcdf-fortran/build
 
 ENV NETCDF_FORTRAN_PATH /usr/local/netcdf_fortran
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_FORTRAN_PATH/lib
 ENV PATH $NETCDF_FORTRAN_PATH/bin:$PATH
 
-#RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir --libs)" ./configure
-#RUN cmake -DNetCDF_DIR=$NETCDF_PATH -DCMAKE_INSTALL_PREFIX=$NETCDF_FORTRAN_PATH ..
-#RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir --libs)" ./configure --prefix=$NETCDF_FORTRAN_PATH --disable-dependency-tracking
 RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir)" ./configure --prefix=$NETCDF_FORTRAN_PATH --disable-dependency-tracking
 RUN make
 RUN make install
+
+# Set Machine Name
+ENV MACH mac
+ENV CESM_ROOT /opt/cesm
+ENV CIME_MACHINE mac
+
+ENV USER root
+
+# Move Mac Config
+#COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
+COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
+
+# Configure CAM
+WORKDIR /opt/cesm/cime/scripts
+RUN mkdir -p /root/cesm/inputdata
