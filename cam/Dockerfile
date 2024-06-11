@@ -103,6 +103,23 @@ ENV USER root
 COPY config_compiler.xml /opt/cesm/cime/config/cesm/machines
 COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
 
+# Install Older Version of LAPACK
+# https://www.netlib.org/lapack/#_lapack_version_3_11_0
+RUN apt remove -y liblapack-dev
+WORKDIR /opt
+RUN wget http://www.netlib.org/lapack/lapack-3.8.0.tar.gz && \ 
+    tar -xzvf lapack-3.8.0.tar.gz && \
+    rm lapack-3.8.0.tar.gz && \
+    mv lapack-3.8.0 lapack 
+
+WORKDIR /opt/lapack
+RUN mkdir build
+WORKDIR /opt/lapack/build
+RUN cmake ..
+RUN make
+RUN make install
+
+
 # Configure CAM
 WORKDIR /opt/cesm/cime/scripts
 RUN mkdir -p /root/cesm/inputdata
