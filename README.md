@@ -3,7 +3,7 @@ Here we present a docker container that runs on both x86 and arm processors?
 
 <div style="text-align: center;">
   <img src="images/egg.jpg" style="width:50%;">
-  <p><em>This Docker Container is a Faberge Egge</em></p>
+  <p><em>This Docker Container is a Faberge Egg</em></p>
 </div>
 
 ## Build
