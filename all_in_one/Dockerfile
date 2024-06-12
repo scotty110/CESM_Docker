@@ -16,7 +16,8 @@ RUN apt-get update && \
     build-essential \
     libxml-libxml-perl \
     wget \
-    openssl && \
+    openssl \ 
+    zlib1g && \
     apt-get clean
 
 # Install Miniconda
@@ -36,9 +37,9 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 # Conda install python version which works
 RUN conda install python=3.8
 
-##############WWWWW####################################
-# Install GCC, Fortran, MPI, BLAS and LAPACK for CESM #
-#######################################################
+##############WWWWW##################################
+# Install GCC, Fortran, MPI, BLAS, LAPACK, and zlib #
+#####################################################
 # Install GCC-9
 RUN apt remove -y gcc && apt update && apt install -y gcc-9 g++-9
 RUN ln -s /usr/bin/gcc-9 /usr/bin/gcc
@@ -102,3 +103,70 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=$LAPACK_PATH .. && \
     make install 
 
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$LAPACK_PATH/lib
+
+# Install zlib
+# https://zlib.net/
+WORKDIR /opt
+RUN wget https://www.zlib.net/zlib-1.3.1.tar.gz && \
+    tar -xzvf zlib-1.3.1.tar.gz && \
+    rm zlib-1.3.1.tar.gz && \
+    mv zlib-1.3.1 zlib
+
+WORKDIR /opt/zlib
+ENV ZLIB_PATH /usr/local/zlib
+RUN mkdir build
+WORKDIR /opt/zlib/build
+RUN cmake -DCMAKE_INSTALL_PREFIX=$ZLIB_PATH .. && \
+    make -j $(nproc) && \
+    make install
+
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$ZLIB_PATH/lib
+
+
+###############################################
+# Install HDF5, NetCDF-C, NetCDF-Fortran, PIO #
+###############################################
+# MPI Compiler Support
+ENV CC /usr/local/openmpi/bin/mpicc
+ENV FC /usr/local/openmpi/bin/mpif90
+ENV CXX /usr/local/openmpi/bin/mpicxx
+
+# Install HDF5
+# https://portal.hdfgroup.org/downloads/
+WORKDIR /opt
+RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-3.tar.gz && \
+    tar -xzvf hdf5-1.14.4-3.tar.gz && \
+    rm hdf5-1.14.4-3.tar.gz && \
+    mv hdf5-1.14.4-3 hdf5 
+
+WORKDIR /opt/hdf5
+ENV HDF5_PATH /usr/local/hdf5
+RUN mkdir builds
+WORKDIR /opt/hdf5/builds
+RUN cmake -DCMAKE_INSTALL_PREFIX=$HDF5_PATH -DHDF5_ENABLE_PARALLEL=ON .. && \
+    make -j $(nproc) && \
+    make install
+
+ENV PATH $HDF5_PATH/bin:$PATH
+ENV LD_LIBRARY_PATH $HDF5_DIR/lib:$LD_LIBRARY_PATH
+
+# Install NetCDF-C
+# https://downloads.unidata.ucar.edu/netcdf/
+WORKDIR /opt
+RUN wget https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netcdf-c-4.9.2.tar.gz && \
+    tar -xzvf netcdf-c-4.9.2.tar.gz && \
+    rm netcdf-c-4.9.2.tar.gz && \
+    mv netcdf-c-4.9.2 netcdf-c
+
+WORKDIR /opt/netcdf-c
+RUN mkdir build
+WORKDIR /opt/netcdf-c/build
+ENV NETCDF_C_PATH /usr/local/netcdf
+RUN cmake -DCMAKE_INSTALL_PREFIX=$NETCDF_C_PATH .. && \
+    make -j $(nproc) && \
+    make install
+
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$NETCDF_C_PATH/lib
+ENV PATH $NETCDF_C_PATH/bin:$PATH
+
+
