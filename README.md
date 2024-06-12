@@ -1,5 +1,5 @@
 # CAM/CESM on Grace Hopper 
-Here we present a docker container that runs on both x86 and arm processors?
+Here we present a docker container that runs on arm processors?
 
 <div style="text-align: center;">
   <img src="images/egg.jpg" style="width:50%;">
@@ -8,25 +8,33 @@ Here we present a docker container that runs on both x86 and arm processors?
 
 ## Build
 ### Base CESM 
-Base CESM container installes compilers and pulls the needed repos to build and run projects. Note this does not include dependencies like NetCDF (may add later). You can compile for x86 by changing the miniconda package to `Linux-x86_64.sh`. 
-1. `cd ./cesm`
-2. `./build.sh`
+Base CESM provides the following packages installed from source code by the maintainers:
+- Fortran-9.5
+- MPI
+- BLAS
+- LAPACK
+- HDF5 (with parallel support)
+- NetCDF-C 
+- NetCDF-Fortran
+- Parrallel IO (no fortran)
 
-## Download Intermediate Certs
-1. Verify that still using InCommon: `openssl x509 -in svn-ccsm-cert.crt -text -noout`. Should give something like: ```Data:
-        Version: 3 (0x2)
-        Serial Number:
-            21:85:bc:d4:dd:fc:31:57:42:bb:12:ed:fa:c6:df:6f
-        Signature Algorithm: sha384WithRSAEncryption
-        Issuer: C = US, O = Internet2, CN = InCommon RSA Server CA 2
-        Validity
-            Not Before: Jan 22 00:00:00 2024 GMT
-            Not After : Jan 21 23:59:59 2025 GMT
-        Subject: C = US, ST = Colorado, O = University Corporation for Atmospheric Research, CN = *.cgd.ucar.edu
-        Subject Public Key Info: ...```
-2. Navigate to [Link](https://uit.stanford.edu/service/ssl/chain) or [Link](https://it.colostate.edu/incommon-certificates/#)
-3. Other potential cert Link: [Link](https://it.colostate.edu/incommon-certificates/#) [From](https://incommon.org/certificates/repository/)
+We also install `python-3.8` to manage CESM's ...
 
-[Link](https://github.com/NordicESMhub/containers)
-[Link](https://github.com/NordicESMhub/cesm_docker_libs)
+How to build:
+1. Install docker
+2. Navigate to `./cesm_base`
+3. Run `./build.sh`. This might take awhile, but should build the container `cesm_base`
+
+Note. This image should be good for a couple of years, may need to update as ubuntu depricates `24.04`
+
+### CESM
+This container installes CESM2.2.2 (We included CESM2.1.5 as well, but we were having trouble getting it to run, updates to follow).
+
+To Build
+1. Build `cesm_base` image
+2. Navigate to `./cesm`
+3. Runn `./build.sh` to build the container. This will pull CESM things and takes awhile
+
+## x86
+While not supported by this repo, the only hard coded `aarch64` package is the miniconde install script. Probably could replace with `Linux-x86` to build. Untested though.
 

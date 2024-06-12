@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build -t cesm .
-#docker build --no-cache -t cesm .
+docker build -t cesm_base .
+#docker build --no-cache -t cesm_base .

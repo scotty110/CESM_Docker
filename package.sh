@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker save -o cam_aarch64.tar cam
-#gzip cam_aarch64.tar
+docker save -o cesm_aarch64.tar cesm
+#gzip cesm_aarch64.tar
