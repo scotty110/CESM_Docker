@@ -107,10 +107,10 @@ COPY config_machines.xml /opt/cesm/cime/config/cesm/machines
 # https://www.netlib.org/lapack/#_lapack_version_3_11_0
 RUN apt remove -y liblapack-dev
 WORKDIR /opt
-RUN wget http://www.netlib.org/lapack/lapack-3.8.0.tar.gz && \ 
-    tar -xzvf lapack-3.8.0.tar.gz && \
-    rm lapack-3.8.0.tar.gz && \
-    mv lapack-3.8.0 lapack 
+RUN wget http://www.netlib.org/lapack/lapack-3.5.0.tgz && \
+    tar -xzvf lapack-3.5.0.tgz && \
+    rm lapack-3.5.0.tgz && \
+    mv lapack-3.5.0 lapack 
 
 WORKDIR /opt/lapack
 RUN mkdir build
