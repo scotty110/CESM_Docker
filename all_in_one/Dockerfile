@@ -150,7 +150,7 @@ RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz &&
     mv ParallelIO-pio2_3_1 pio 
 
 WORKDIR /opt/pio/build
-RUN cmake -DNetCDF_C_PATH=$NETCDF_C_PATH -DPIO_ENABLE_FORTRAN=OFF .. && \
-    make \
+RUN cmake -DPIO_ENABLE_FORTRAN=OFF .. && \
+    make -j $(nproc) && \
     make install
 
