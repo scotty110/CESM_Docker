@@ -45,3 +45,7 @@ ENV USER root
 
 COPY config/config_compiler.xml /opt/cesm/cime/config/cesm/machines
 COPY config/config_machines.xml /opt/cesm/cime/config/cesm/machines
+
+WORKDIR /opt/cesm/cime/scripts
+RUN mkdir -p /root/cesm/inputdata
+ENV NETCDF_PATH /usr/local
