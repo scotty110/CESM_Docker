@@ -1,55 +1,12 @@
 # Use Ubuntu as the base image
-FROM ubuntu:latest
-
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Update and upgrade the base image
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y \
-    ca-certificates \
-    git \
-    subversion \
-    cmake \
-    build-essential \
-    gfortran \
-    libblas-dev \
-    liblapack-dev \
-    openmpi-bin \
-    openmpi-common \
-    libopenmpi-dev \
-    libxml-libxml-perl \
-    wget \
-    openssl && \
-    apt-get clean
-
-# MPI 
-ENV LD_LIBRARY_PATH /usr/lib/aarch64-linux-gnu/openmpi/:$LD_LIBRARY_PATH
-
-# Install Miniconda
-WORKDIR /opt
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh && \
-    bash miniconda.sh -b -p /opt/miniconda && \
-    rm miniconda.sh
-
-# Set up the conda environment
-ENV PATH="/opt/miniconda/bin:$PATH"
-RUN conda init && \
-    conda config --set auto_activate_base false
-
-# Ensure conda is available in non-interactive shells
-RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
-
-# Conda install python version which works
-RUN conda install python=3.8
+FROM cesm_base:latest
 
 # Add cert ccsm-cert (incommon signed)
-COPY svn-ccsm-cert.crt /usr/local/share/ca-certificates
+COPY crt/svn-ccsm-cert.crt /usr/local/share/ca-certificates
 RUN chmod 644 /usr/local/share/ca-certificates/svn-ccsm-cert.crt
 
 # Add InCommon
-COPY incommon.crt /usr/local/share/ca-certificates
+COPY crt/incommon.crt /usr/local/share/ca-certificates
 RUN chmod 644 /usr/local/share/ca-certificates/incommon.crt
 
 # Update CA certificates
@@ -75,7 +32,16 @@ RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.
     rm release-cesm2.2.2.tar.gz && \
     mv CESM-release-cesm2.2.2 cesm
 
-
 # Get Deps
 WORKDIR /opt/cesm
 RUN ./manage_externals/checkout_externals
+
+# Set up Machine
+# Set Machine Name
+ENV MACH mac
+ENV CESM_ROOT /opt/cesm
+ENV CIME_MACHINE mac
+ENV USER root
+
+COPY config/config_compiler.xml /opt/cesm/cime/config/cesm/machines
+COPY config/config_machines.xml /opt/cesm/cime/config/cesm/machines
