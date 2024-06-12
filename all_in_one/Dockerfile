@@ -3,7 +3,6 @@ FROM ubuntu:latest
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 
-
 # Update and upgrade the base image
 # Install the packages that shouldn't affect the build process as all
 RUN apt-get update && \
@@ -13,9 +12,14 @@ RUN apt-get update && \
     git \
     subversion \
     cmake \
+    m4 \
     build-essential \
     libxml-libxml-perl \
-    wget && \ 
+    wget \
+    curl \
+    libcurl4-openssl-dev \
+    zlib1g \
+    zlib1g-dev && \ 
     apt-get clean
 
 # Install Miniconda
@@ -89,19 +93,6 @@ RUN cmake .. && \
     make -j $(nproc) && \
     make install 
 
-# Install zlib
-# https://zlib.net/
-WORKDIR /opt
-RUN wget https://www.zlib.net/zlib-1.3.1.tar.gz && \
-    tar -xzvf zlib-1.3.1.tar.gz && \
-    rm zlib-1.3.1.tar.gz && \
-    mv zlib-1.3.1 zlib
-
-WORKDIR /opt/zlib/build
-RUN cmake .. && \
-    make -j $(nproc) && \
-    make install
-
 ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
 
 ###############################################
@@ -121,7 +112,7 @@ RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1
     mv hdf5-1.14.4-3 hdf5 
 
 WORKDIR /opt/hdf5/build
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DHDF5_ENABLE_PARALLEL=ON -DZLIB_USE_EXTERNAL=ON -DHDF5_ENABLE_Z_LIB_SUPPORT=ON .. && \
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DHDF5_ENABLE_PARALLEL=ON  .. && \
     make -j $(nproc) && \
     make install
 
@@ -134,8 +125,32 @@ RUN wget https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netcdf-c-4.9.2.tar.gz
     mv netcdf-c-4.9.2 netcdf-c
 
 WORKDIR /opt/netcdf-c/build
-#RUN cmake .. && \
-#    make -j $(nproc) && \
-#    make install
+RUN cmake .. && \
+    make -j $(nproc) && \
+    make install
 
+# Install NetCDF-Fortran
+WORKDIR /opt
+RUN wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.6.1.tar.gz && \
+    tar -xzvf v4.6.1.tar.gz && \
+    rm v4.6.1.tar.gz && \
+    mv netcdf-fortran-4.6.1 netcdf-fortran
+
+WORKDIR /opt/netcdf-fortran
+RUN CPPFLAGS="-I$(nc-config --includedir)" LDFLAGS="-L$(nc-config --libdir)" ./configure --disable-dependency-tracking && \
+    make -j $(nproc) && \
+    make install
+
+# Make PIO Parallel I/0
+# https://www2.cesm.ucar.edu/models/pio/
+WORKDIR /opt
+RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz && \
+    tar -xzvf pio2_3_1.tar.gz && \
+    rm pio2_3_1.tar.gz && \
+    mv ParallelIO-pio2_3_1 pio 
+
+WORKDIR /opt/pio/build
+RUN cmake -DNetCDF_C_PATH=$NETCDF_C_PATH -DPIO_ENABLE_FORTRAN=OFF .. && \
+    make \
+    make install
 
