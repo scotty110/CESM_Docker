@@ -1,0 +1,4 @@
+./create_newcase --case aqua_case --compset QPC6 --res f09_f09_mg17
+cd aqua_case
+./case.setup
+./case.build

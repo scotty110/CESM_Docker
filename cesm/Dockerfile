@@ -49,3 +49,7 @@ COPY config/config_machines.xml /opt/cesm/cime/config/cesm/machines
 WORKDIR /opt/cesm/cime/scripts
 RUN mkdir -p /root/cesm/inputdata
 ENV NETCDF_PATH /usr/local
+
+ENV LDFLAGS "-L/usr/local/lib -llapack -lblas"
+
+RUN apt update && apt install -y vim
