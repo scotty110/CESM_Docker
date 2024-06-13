@@ -26,7 +26,7 @@
     <mpirun mpilib="openmpi">
       <executable>mpiexec</executable>
       <arguments>
-        <arg name="ntasks"> -n {{ total_tasks }} </arg>
+        <arg name="ntasks"> -n 8 </arg>
       </arguments>
     </mpirun>
     <module_system type="none" />
