@@ -50,6 +50,7 @@ WORKDIR /opt/cesm/cime/scripts
 RUN mkdir -p /root/cesm/inputdata
 ENV NETCDF_PATH /usr/local
 
+# Set some Flags
 ENV LDFLAGS "-L/usr/local/lib -llapack -lblas"
+ENV CXX_LDFLAGS "-L/usr/local/lib"
 
-RUN apt update && apt install -y vim
