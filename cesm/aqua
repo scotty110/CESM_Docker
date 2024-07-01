@@ -2,3 +2,4 @@
 cd aqua_case
 ./case.setup
 ./case.build
+./case.submit
