@@ -38,21 +38,21 @@ RUN ./manage_externals/checkout_externals
 
 # Set up Machine
 # Set Machine Name
-ENV MACH mac
-ENV CESM_ROOT /opt/cesm
-ENV CIME_MACHINE mac
-ENV USER root
+ENV MACH=mac
+ENV CESM_ROOT=/opt/cesm
+ENV CIME_MACHINE=mac
+ENV USER=root
 
 #COPY config/config_compiler.xml /opt/cesm/cime/config/cesm/machines
 COPY config/config_machines.xml /opt/cesm/cime/config/cesm/machines
 
 WORKDIR /opt/cesm/cime/scripts
 RUN mkdir -p /root/cesm/inputdata
-ENV NETCDF_PATH /usr/local
+ENV NETCDF_PATH=/usr/local
 
 # Set some Flags
-ENV LDFLAGS "-L/usr/local/lib -llapack -lblas"
-ENV CXX_LDFLAGS "-L/usr/local/lib"
+ENV LDFLAGS="-L/usr/local/lib -llapack -lblas"
+ENV CXX_LDFLAGS="-L/usr/local/lib"
 ENV OMPI_ALLOW_RUN_AS_ROOT=1
 ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
