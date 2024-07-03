@@ -53,8 +53,6 @@ ENV NETCDF_PATH=/usr/local
 # Set some Flags
 ENV LDFLAGS="-L/usr/local/lib -llapack -lblas"
 ENV CXX_LDFLAGS="-L/usr/local/lib"
-#ENV OMPI_ALLOW_RUN_AS_ROOT=1
-#ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 # Singularity 
 RUN chmod -R 777 /opt/cesm

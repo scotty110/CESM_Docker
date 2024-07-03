@@ -95,15 +95,15 @@ RUN cmake .. && \
     make -j $(nproc) && \
     make install 
 
-ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib
 
 ###############################################
 # Install HDF5, NetCDF-C, NetCDF-Fortran, PIO #
 ###############################################
 # MPI Compiler Support
-ENV CC /usr/local/bin/mpicc
-ENV FC /usr/local/bin/mpif90
-ENV CXX /usr/local/bin/mpicxx
+ENV CC=/usr/local/bin/mpicc
+ENV FC=/usr/local/bin/mpif90
+ENV CXX=/usr/local/bin/mpicxx
 
 # Install HDF5
 # https://portal.hdfgroup.org/downloads/
