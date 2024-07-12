@@ -90,7 +90,7 @@ RUN wget https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.11.0.ta
     mv lapack-3.11.0 lapack 
 
 WORKDIR /opt/lapack/build
-ENV LAPACK_PATH /usr/local/lapack
+ENV LAPACK_PATH=/usr/local/lapack
 RUN cmake .. && \
     make -j $(nproc) && \
     make install 
