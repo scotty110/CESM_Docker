@@ -43,7 +43,7 @@ ENV CESM_ROOT=/opt/cesm
 ENV CIME_MACHINE=mac
 ENV USER=root
 
-#COPY config/config_compiler.xml /opt/cesm/cime/config/cesm/machines
+COPY config/config_compilers.xml /opt/cesm/cime/config/cesm/machines
 COPY config/config_machines.xml /opt/cesm/cime/config/cesm/machines
 
 WORKDIR /opt/cesm/cime/scripts
