@@ -1,0 +1,6 @@
+./create_newcase --case fhist_case --compset FHIST --res f09_f09_mg17 
+cd fhist_case
+./xmlchange STOP_OPTION=ndays,STOP_N=3
+./case.setup
+./case.build
+./case.submit

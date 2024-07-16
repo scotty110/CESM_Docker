@@ -1,11 +1,7 @@
-./create_newcase --case aqua_case --compset QPC6 --res f09_f09_mg17
-cd aqua_case
-./xmlchange STOP_OPTION=ndays,STOP_N=3 
-./xmlchange STOP_OPTION=nhours,STOP_N=3
+./create_newcase --case aqua_case --compset QSC6 --res f09_f09_mg17 && \
+cd aqua_case && \
+./xmlchange STOP_OPTION=nhours,STOP_N=3 && \
 ./case.setup
+
 ./case.build
 ./case.submit
-
-
-
-./create_newcase --case fhist_case --compset FHIST --res f09_f09_mg17 
