@@ -5,7 +5,6 @@
   <NETCDF_PATH>$ENV{NETCDF_PATH}</NETCDF_PATH>
   <CFLAGS>
     <base> -fexcess-precision=standard -frounding-math -fsignaling-nans </base>
-    <append compile_threaded="true"> -fopenmp </append>
     <append> -O3 </append>
   </CFLAGS>
   <CPPDEFS>
@@ -17,15 +16,7 @@
     <base> -fdefault-real-8 </base>
   </FC_AUTO_R8>
   <FFLAGS>
-    <!-- -ffree-line-length-none and -ffixed-line-length-none need to be in FFLAGS rather than in FIXEDFLAGS/FREEFLAGS
-       so that these are passed to cmake builds (cmake builds don't use FIXEDFLAGS and FREEFLAGS). -->
     <base> -ffree-line-length-none -ffixed-line-length-none </base>
-    <append compile_threaded="true"> -fopenmp </append>
-    <!-- Ideally, we would also have 'invalid' in the ffpe-trap list. But at
-         least with some versions of gfortran (confirmed with 5.4.0, 6.3.0 and
-         7.1.0), gfortran's isnan (which is called in cime via the
-         CPRGNU-specific shr_infnan_isnan) causes a floating point exception
-         when called on a signaling NaN. -->
     <append> -O3 </append>
   </FFLAGS>
   <FIXEDFLAGS>
@@ -36,7 +27,6 @@
   </FREEFLAGS>
   <HAS_F2008_CONTIGUOUS>FALSE</HAS_F2008_CONTIGUOUS>
   <LDFLAGS>
-    <append compile_threaded="true"> -fopenmp </append>
     <append> -L/usr/local/lib </append>
     <append> -llapack </append>
     <append> -lblas </append>
