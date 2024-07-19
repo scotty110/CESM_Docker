@@ -4,7 +4,7 @@
 <compiler COMPILER="gnu">
   <NETCDF_PATH>$ENV{NETCDF_PATH}</NETCDF_PATH>
   <CFLAGS>
-    <base> -fexcess-precision=standard -frounding-math -fsignaling-nans </base>
+    <base> -std=c99 -fexcess-precision=standard -frounding-math -fsignaling-nans </base>
     <append> -O3 </append>
   </CFLAGS>
   <CPPDEFS>

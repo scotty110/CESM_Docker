@@ -3,5 +3,9 @@ cd aqua_case && \
 ./xmlchange STOP_OPTION=nhours,STOP_N=3 && \
 ./case.setup
 
+echo "nhtfrq = -1" >> user_nl_cam && \
+echo "mfilt = 1" >> user_nl_cam && \
+echo "fincl1 = 'T', 'QT', 'Q', 'U', 'V'" >> user_nl_cam
+
 ./case.build
 ./case.submit
