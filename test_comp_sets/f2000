@@ -1,8 +1,11 @@
-./create_newcase --case f2000_test --compset F2000climo --res f09_f09_mg17 && \
-cd f2000_test && \
-./xmlchange STOP_OPTION=ndays,STOP_N=3 && \
+./create_newcase --case f2000_control_highres --res f09_f09_mg17 --compset F2000climo && \
+cd f2000_control_highres && \
+echo "nhtfrq(2) = -3">> user_nl_cam && \
+echo "mfilt(2) = 240">> user_nl_cam && \
+echo "fincl2 = 'TS:I','PS:I', 'U850:I','T850:I','PRECT:I'">> user_nl_cam && \
+echo "">> user_nl_cam && \
+./xmlchange STOP_N=10,STOP_OPTION=ndays && \
 ./case.setup
-
 
 ./case.build
 ./case.submit
