@@ -38,3 +38,5 @@ To Build
 ## x86
 While not supported by this repo, the only hard coded `aarch64` package is the miniconde install script. Probably could replace with `Linux-x86` to build. Untested though.
 
+## Blog Post
+Our blog post: [Link](https://medium.com/@twins.corgi.0a/containerizing-cesm-and-porting-to-arm-b9419ed939af)
