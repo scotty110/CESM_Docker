@@ -1,5 +1,5 @@
-FROM nvcr.io/nvidia/cuda-dl-base:24.09-cuda12.6-devel-ubuntu22.04
-#FROM ubuntu:latest
+FROM nvcr.io/nvidia/cuda:12.6.2-cudnn-devel-ubuntu24.04
+#Link: https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda/tags
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -57,12 +57,6 @@ ENV PATH=$NVHPC/bin:$PATH
 #######################################
 # Install MPI, BLAS, LAPACK, and zlib #
 #######################################
-# Replace with Nvidia Compilers
-#RUN ln -s $(which nvc) /usr/bin/gcc
-#RUN ln -s $(which nvcc) /usr/bin/g++
-
-# Install Fortran
-#RUN ln -s $(which nvfortran) /usr/bin/gfortran
 
 # Install MPI
 # https://www.open-mpi.org/software/ompi/v5.0/
@@ -150,23 +144,25 @@ RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1
     mv hdf5-1.14.4-3 hdf5 
 
 WORKDIR /opt/hdf5
-RUN CC="nvc" \
-        MPICH_CC="nvc" \
-        OMPI_CC="nvc" \
-        MPI_CC="nvc" \
-        ./configure \
-        --prefix=/usr/local \
-        --enable-parallel \
-        --enable-fortran \
-        --enable-shared \
-        --enable-static \
-        --enable-build-mode=production \
-        --enable-mpi-compat=yes \
-        CFLAGS="-fPIC -DMPICH_SKIP_MPICXX" \
-        CXXFLAGS="-fPIC -DMPICH_SKIP_MPICXX" \
-        FCFLAGS="-fPIC" \
-        && make -j $(nproc) \
-        && make install
+RUN ./configure \
+    --prefix=/usr/local \
+    --enable-parallel \
+    --enable-fortran \
+    --enable-shared \
+    --enable-static \
+    --enable-build-mode=production \
+    CC="nvc" \
+    FC="nvfortran" \
+    CXX="nvc++" \
+    MPICC="mpicc" \
+    MPIFC="mpif90" \
+    MPICXX="mpicxx" \
+    CFLAGS="-fPIC" \
+    CXXFLAGS="-fPIC" \
+    FCFLAGS="-fPIC"
+
+RUN make -j $(nproc) \
+    && make install
     
 # Set HDF5 environment variables
 ENV HDF5_DIR=/usr/local
