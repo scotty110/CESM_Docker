@@ -73,7 +73,8 @@ RUN wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.g
     mv openmpi-5.0.3 openmpi
 
 WORKDIR /opt/openmpi
-RUN ./configure \
+WORKDIR /opt/openmpi
+RUN ./configure --prefix=/usr/local \
     CC=$(which nvc) \
     CXX=$(which nvc++) \
     FC=$(which nvfortran) \

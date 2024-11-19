@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <config_machines version="2.0"> 
-   <machine MACH="mac">
-       <DESC>Config for grace hopper machine?</DESC>
+   <machine MACH="gh200">
+       <DESC>Config for grace hopper machine</DESC>
        <OS>LINUX</OS>
-       <COMPILERS>gnu</COMPILERS>
+       <COMPILERS>pgi</COMPILERS>
        <MPILIBS>openmpi</MPILIBS>
        <PROJECT>none</PROJECT>
        <SAVE_TIMING_DIR> </SAVE_TIMING_DIR>
@@ -32,6 +32,9 @@
            <env name="OMPI_CC">nvc</env>
            <env name="OMPI_CXX">nvc++</env>
            <env name="OMPI_FC">nvfortran</env>
+           <env name="OMPI_DIR">/usr/local/</env>
+           <env name="LD_LIBRARY_PATH">/usr/local/lib:$ENV{LD_LIBRARY_PATH}</env>
+           <env name="PATH">/usr/local/bin:$ENV{PATH}</env>
        </environment_variables>
        <resource_limits>
            <resource name="RLIMIT_STACK">-1</resource>

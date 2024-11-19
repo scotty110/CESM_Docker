@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config_compilers version="2.0">
-   <compiler COMPILER="gnu">
+   <compiler COMPILER="pgi">
        <NETCDF_PATH>$ENV{NETCDF_PATH}</NETCDF_PATH>
        
        <CFLAGS>
@@ -18,7 +18,7 @@
        </FC_AUTO_R8>
        
        <FFLAGS>
-           <base> -Mfree -Ktrap=none -Mnomax_dims</base>
+           <base> -Mfree -Ktrap=none</base>
            <append> -O3 </append>
        </FFLAGS>
        

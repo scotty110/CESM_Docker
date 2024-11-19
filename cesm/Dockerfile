@@ -21,16 +21,16 @@ RUN echo "[global]" > /etc/subversion/servers && \
 # Download CESM
 # https://www.cesm.ucar.edu/models/releases
 WORKDIR /opt
-RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.1.5.tar.gz && \
-    tar -zxvf ./release-cesm2.1.5.tar.gz && \
-    rm release-cesm2.1.5.tar.gz && \
-    mv CESM-release-cesm2.1.5 cesm
+#RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.1.5.tar.gz && \
+#    tar -zxvf ./release-cesm2.1.5.tar.gz && \
+#    rm release-cesm2.1.5.tar.gz && \
+#    mv CESM-release-cesm2.1.5 cesm
 
 # Install Dev, issue with gnu compiler broke in 2.1
-#RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
-#    tar -zxvf ./release-cesm2.2.2.tar.gz && \
-#    rm release-cesm2.2.2.tar.gz && \
-#    mv CESM-release-cesm2.2.2 cesm
+RUN wget https://github.com/ESCOMP/CESM/archive/refs/tags/release-cesm2.2.2.tar.gz && \
+    tar -zxvf ./release-cesm2.2.2.tar.gz && \
+    rm release-cesm2.2.2.tar.gz && \
+    mv CESM-release-cesm2.2.2 cesm
 
 # Get Deps
 WORKDIR /opt/cesm
@@ -38,9 +38,9 @@ RUN ./manage_externals/checkout_externals
 
 # Set up Machine
 # Set Machine Name
-ENV MACH=mac
+ENV MACH=gh200
 ENV CESM_ROOT=/opt/cesm
-ENV CIME_MACHINE=mac
+ENV CIME_MACHINE=gh200
 ENV USER=root
 
 COPY config/config_compilers.xml /opt/cesm/cime/config/cesm/machines
@@ -56,4 +56,12 @@ ENV CXX_LDFLAGS="-L/usr/local/lib"
 
 # Singularity 
 RUN chmod -R 777 /opt/cesm
+
+# Set up MPI (OpenMPI)
+RUN rm -rf /usr/local/mpi
+ENV PATH=${PATH/\/usr\/local\/mpi\/bin:/}
+
+# Nice to have
+ENV PATH=/opt/cesm/cime/scripts:$PATH
+WORKDIR /root
 

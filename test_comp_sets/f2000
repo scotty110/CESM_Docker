@@ -1,4 +1,4 @@
-./create_newcase --case f2000_control_highres --res f09_f09_mg17 --compset F2000climo && \
+create_newcase --case f2000_control_highres --res f09_f09_mg17 --compset F2000climo && \
 cd f2000_control_highres && \
 echo "nhtfrq(2) = -3">> user_nl_cam && \
 echo "mfilt(2) = 240">> user_nl_cam && \
