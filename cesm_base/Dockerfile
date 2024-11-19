@@ -178,14 +178,19 @@ RUN export CPPFLAGS="-I$(nc-config --includedir)" \
 
 # Make PIO Parallel I/0
 # https://www2.cesm.ucar.edu/models/pio/
-#WORKDIR /opt
-#RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz && \
-#    tar -xzvf pio2_3_1.tar.gz && \
-#    rm pio2_3_1.tar.gz && \
-#    mv ParallelIO-pio2_3_1 pio 
+WORKDIR /opt
+RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz && \
+    tar -xzvf pio2_3_1.tar.gz && \
+    rm pio2_3_1.tar.gz && \
+    mv ParallelIO-pio2_3_1 pio 
 
-#WORKDIR /opt/pio/build
-#RUN cmake -DPIO_ENABLE_FORTRAN=OFF .. && \
-#    make -j $(nproc) && \
-#    make install
+WORKDIR /opt/pio/build
+RUN cmake .. \
+    -DPIO_ENABLE_FORTRAN=OFF \
+    -DPIO_ENABLE_TIMING=OFF \
+    -DWITH_PNETCDF=OFF \
+    -DPIO_USE_MALLOC=ON \
+    -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    make -j $(nproc) && \
+    make install
 
