@@ -73,8 +73,7 @@ RUN wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.g
     mv openmpi-5.0.3 openmpi
 
 WORKDIR /opt/openmpi
-WORKDIR /opt/openmpi
-RUN ./configure --prefix=/usr/local \
+RUN ./configure --prefix=/usr/local/ompi \
     CC=$(which nvc) \
     CXX=$(which nvc++) \
     FC=$(which nvfortran) \
@@ -82,9 +81,25 @@ RUN ./configure --prefix=/usr/local \
     CXXFLAGS="-fPIC" \
     FFLAGS="-fPIC" \
     FCFLAGS="-fPIC" \
-    --enable-orterun-prefix-by-default && \
-    make -j $(nproc) all && \
-    make install
+    --enable-orterun-prefix-by-default \
+    --enable-mpi-fortran=yes \
+    --with-wrapper-cflags="-fPIC" \
+    --with-wrapper-cxxflags="-fPIC" \
+    --with-wrapper-fcflags="-fPIC" \
+    --enable-shared \
+    --enable-static \
+    --enable-builtin-atomics \
+    --with-nvhpc \
+    --enable-mpi1-compatibility \
+    --enable-mpi3-compatibility \
+    --with-mpi-params=3 
+
+RUN make -j $(nproc) all \
+    && make install
+
+ENV PATH=/usr/local/ompi/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/ompi/lib:$LD_LIBRARY_PATH
+ENV PKG_CONFIG_PATH=/usr/local/ompi/lib/pkgconfig
 
 # Install BLAS
 # Only latest version is on site: https://netlib.org/blas/
@@ -120,9 +135,11 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 # Install HDF5, NetCDF-C, NetCDF-Fortran, PIO #
 ###############################################
 # MPI Compiler Support
-ENV CC=/usr/local/bin/mpicc
-ENV FC=/usr/local/bin/mpif90
-ENV CXX=/usr/local/bin/mpicxx
+ENV OMPI_CC=nvc
+ENV OMPI_CXX=nvc++
+ENV OMPI_FC=nvfortran
+
+ENV MPI_ROOT=/usr/local/ompi
 
 # Install HDF5
 # https://portal.hdfgroup.org/downloads/
@@ -132,10 +149,28 @@ RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1
     rm hdf5-1.14.4-3.tar.gz && \
     mv hdf5-1.14.4-3 hdf5 
 
-WORKDIR /opt/hdf5/build
-RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DHDF5_ENABLE_PARALLEL=ON -DCMAKE_C_COMPILER=$(which nvc) -DCMAKE_CXX_COMPILER=$(which nvc++) -DCMAKE_Fortran_COMPILER=$(which nvfortran) && \
-    make -j $(nproc) && \
-    make install
+WORKDIR /opt/hdf5
+RUN CC="nvc" \
+        MPICH_CC="nvc" \
+        OMPI_CC="nvc" \
+        MPI_CC="nvc" \
+        ./configure \
+        --prefix=/usr/local \
+        --enable-parallel \
+        --enable-fortran \
+        --enable-shared \
+        --enable-static \
+        --enable-build-mode=production \
+        --enable-mpi-compat=yes \
+        CFLAGS="-fPIC -DMPICH_SKIP_MPICXX" \
+        CXXFLAGS="-fPIC -DMPICH_SKIP_MPICXX" \
+        FCFLAGS="-fPIC" \
+        && make -j $(nproc) \
+        && make install
+    
+# Set HDF5 environment variables
+ENV HDF5_DIR=/usr/local
+ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 
 # Install NetCDF-C
 # https://downloads.unidata.ucar.edu/netcdf/
