@@ -145,17 +145,6 @@ RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1
 
 ENV MPI_DIR=/usr/local/ompi
 WORKDIR /opt/hdf5
-#RUN ./configure \
-#    --prefix=/usr/local \
-#    --enable-parallel \
-#    --enable-fortran \
-#    --enable-shared \
-#    --enable-static \
-#    --enable-build-mode=production \
-#    --with-mpi=/usr/local/ompi \
-#    FCFLAGS="-fPIC -fpic -DHAVE_MPI" \
-#    CFLAGS="-fPIC -fpic" \
-#    CXXFLAGS="-fPIC -fpic"
 RUN ./configure \
     CC=$(which nvc) \
     CXX=$(which nvc++) \
@@ -227,11 +216,15 @@ RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz &&
 
 WORKDIR /opt/pio/build
 RUN cmake .. \
+    -DCMAKE_C_COMPILER=mpicc \
+    -DCMAKE_CXX_COMPILER=mpicxx \
+    -DCMAKE_Fortran_COMPILER=mpifort \
     -DPIO_ENABLE_FORTRAN=OFF \
     -DPIO_ENABLE_TIMING=OFF \
     -DWITH_PNETCDF=OFF \
     -DPIO_USE_MALLOC=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    make -j $(nproc) && \
+    -DCMAKE_INSTALL_PREFIX=/usr/local 
+
+RUN make -j $(nproc) && \
     make install
 
