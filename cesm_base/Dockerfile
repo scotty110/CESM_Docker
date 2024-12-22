@@ -39,7 +39,7 @@ RUN conda init && \
 RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 
 # Conda install python version which works
-RUN conda install python=3.8
+RUN conda install python=3.11
 
 ##########################
 # Install Nvidia HPC SDK #
@@ -143,24 +143,32 @@ RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1
     rm hdf5-1.14.4-3.tar.gz && \
     mv hdf5-1.14.4-3 hdf5 
 
-
+ENV MPI_DIR=/usr/local/ompi
 WORKDIR /opt/hdf5
+#RUN ./configure \
+#    --prefix=/usr/local \
+#    --enable-parallel \
+#    --enable-fortran \
+#    --enable-shared \
+#    --enable-static \
+#    --enable-build-mode=production \
+#    --with-mpi=/usr/local/ompi \
+#    FCFLAGS="-fPIC -fpic -DHAVE_MPI" \
+#    CFLAGS="-fPIC -fpic" \
+#    CXXFLAGS="-fPIC -fpic"
 RUN ./configure \
+    CC=$(which nvc) \
+    CXX=$(which nvc++) \
+    FC=$(which nvfortran) \
+    CFLAGS="-fPIC" \
+    CXXFLAGS="-fPIC" \
+    FFLAGS="-fPIC" \
+    FCFLAGS="-fPIC" \
     --prefix=/usr/local \
-    --enable-parallel \
     --enable-fortran \
     --enable-shared \
     --enable-static \
-    --enable-build-mode=production \
-    CC="nvc" \
-    FC="nvfortran" \
-    CXX="nvc++" \
-    MPICC="mpicc" \
-    MPIFC="mpif90" \
-    MPICXX="mpicxx" \
-    CFLAGS="-fPIC" \
-    CXXFLAGS="-fPIC" \
-    FCFLAGS="-fPIC"
+    --enable-build-mode=production 
 
 RUN make -j $(nproc) \
     && make install
