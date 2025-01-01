@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/cuda:12.6.2-cudnn-devel-ubuntu24.04
+FROM nvcr.io/nvidia/cuda:12.4.1-devel-ubuntu22.04
 #Link: https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda/tags
 
 # Set environment variables
@@ -41,18 +41,13 @@ RUN echo "source /opt/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
 # Conda install python version which works
 RUN conda install python=3.11
 
-##########################
-# Install Nvidia HPC SDK #
-##########################
-# Link: https://developer.nvidia.com/hpc-sdk
-RUN curl https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC-SDK | gpg --dearmor -o /usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg
-RUN echo 'deb [signed-by=/usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /' | tee /etc/apt/sources.list.d/nvhpc.list && \
-    apt-get update -y && \
-    apt-get install -y nvhpc-24-11
+##############WWWWW##################################
+# Install GCC, Fortran, MPI, BLAS, LAPACK, and zlib #
+#####################################################
+# Install Fortran
+RUN apt install -y gfortran-11
+RUN ln -s /usr/bin/gfortran-11 /usr/bin/gfortran
 
-# Set environment variables
-ENV NVHPC=/opt/nvidia/hpc_sdk/Linux_x86_64/24.11/compilers
-ENV PATH=$NVHPC/bin:$PATH
 
 #######################################
 # Install MPI, BLAS, LAPACK, and zlib #
@@ -68,9 +63,9 @@ RUN wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.g
 
 WORKDIR /opt/openmpi
 RUN ./configure --prefix=/usr/local/ompi \
-    CC=$(which nvc) \
-    CXX=$(which nvc++) \
-    FC=$(which nvfortran) \
+    CC=$(which gcc) \
+    CXX=$(which g++) \
+    FC=$(which gfortran) \
     CFLAGS="-fPIC" \
     CXXFLAGS="-fPIC" \
     FFLAGS="-fPIC" \
@@ -97,7 +92,6 @@ ENV PKG_CONFIG_PATH=/usr/local/ompi/lib/pkgconfig
 
 # Install BLAS
 # Only latest version is on site: https://netlib.org/blas/
-# Maybe could downgrade by selecting version ??? Something to investigate if need by
 WORKDIR /opt
 RUN wget http://www.netlib.org/blas/blas-3.12.0.tgz && \
     tar -xzvf blas-3.12.0.tgz && \
@@ -105,7 +99,7 @@ RUN wget http://www.netlib.org/blas/blas-3.12.0.tgz && \
     mv BLAS-3.12.0 blas 
 
 WORKDIR /opt/blas/build
-RUN cmake .. -DCMAKE_C_COMPILER=$(which nvc) -DCMAKE_CXX_COMPILER=$(which nvc++) -DCMAKE_Fortran_COMPILER=$(which nvfortran) && \
+RUN cmake .. -DCMAKE_C_COMPILER=$(which gcc) -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_Fortran_COMPILER=$(which gfortran) && \
     make -j $(nproc) && \
     make install
 
@@ -119,19 +113,18 @@ RUN wget https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.11.0.ta
 
 WORKDIR /opt/lapack/build
 ENV LAPACK_PATH=/usr/local/lapack
-RUN cmake .. -DCMAKE_C_COMPILER=$(which nvc) -DCMAKE_CXX_COMPILER=$(which nvc++) -DCMAKE_Fortran_COMPILER=$(which nvfortran) && \
+RUN cmake .. -DCMAKE_C_COMPILER=$(which gcc) -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_Fortran_COMPILER=$(which gfortran) && \
     make -j $(nproc) && \
     make install 
 
-ENV LD_LIBRARY_PATH=/usr/local/lib
 
 ###############################################
 # Install HDF5, NetCDF-C, NetCDF-Fortran, PIO #
 ###############################################
 # MPI Compiler Support
-ENV OMPI_CC=nvc
-ENV OMPI_CXX=nvc++
-ENV OMPI_FC=nvfortran
+ENV OMPI_CC=gcc
+ENV OMPI_CXX=g++
+ENV OMPI_FC=gfortran
 
 ENV MPI_ROOT=/usr/local/ompi
 
@@ -146,9 +139,9 @@ RUN wget https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1
 ENV MPI_DIR=/usr/local/ompi
 WORKDIR /opt/hdf5
 RUN ./configure \
-    CC=$(which nvc) \
-    CXX=$(which nvc++) \
-    FC=$(which nvfortran) \
+    CC=$(which gcc) \
+    CXX=$(which g++) \
+    FC=$(which gfortran) \
     CFLAGS="-fPIC" \
     CXXFLAGS="-fPIC" \
     FFLAGS="-fPIC" \
@@ -175,7 +168,7 @@ RUN wget https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netcdf-c-4.9.2.tar.gz
     mv netcdf-c-4.9.2 netcdf-c
 
 WORKDIR /opt/netcdf-c/build
-RUN cmake .. -DCMAKE_C_COMPILER=$(which nvc) -DCMAKE_CXX_COMPILER=$(which nvc++) -DCMAKE_Fortran_COMPILER=$(which nvfortran) && \
+RUN cmake .. -DCMAKE_C_COMPILER=$(which gcc) -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_Fortran_COMPILER=$(which gfortran) && \
     make -j $(nproc) && \
     make install
 
@@ -190,9 +183,9 @@ WORKDIR /opt/netcdf-fortran
 RUN export CPPFLAGS="-I$(nc-config --includedir)" \
     LDFLAGS="-L$(nc-config --libdir)" \
     LIBS="$(nc-config --libs)" \
-    CC=$(which nvc) \
-    CXX=$(which nvc++) \
-    FC=$(which nvfortran) \
+    CC=$(which gcc) \
+    CXX=$(which g++) \
+    FC=$(which gfortran) \
     CFLAGS="-fPIC -fpic" \
     CXXFLAGS="-fPIC -fpic" \
     FFLAGS="-fPIC -fpic" \
@@ -208,23 +201,14 @@ RUN export CPPFLAGS="-I$(nc-config --includedir)" \
 
 # Make PIO Parallel I/0
 # https://www2.cesm.ucar.edu/models/pio/
-WORKDIR /opt
-RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz && \
-    tar -xzvf pio2_3_1.tar.gz && \
-    rm pio2_3_1.tar.gz && \
-    mv ParallelIO-pio2_3_1 pio 
-
-WORKDIR /opt/pio/build
-RUN cmake .. \
-    -DCMAKE_C_COMPILER=mpicc \
-    -DCMAKE_CXX_COMPILER=mpicxx \
-    -DCMAKE_Fortran_COMPILER=mpifort \
-    -DPIO_ENABLE_FORTRAN=OFF \
-    -DPIO_ENABLE_TIMING=OFF \
-    -DWITH_PNETCDF=OFF \
-    -DPIO_USE_MALLOC=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local 
-
-RUN make -j $(nproc) && \
-    make install
+#WORKDIR /opt
+#RUN wget https://github.com/NCAR/ParallelIO/archive/refs/tags/pio2_3_1.tar.gz && \
+#    tar -xzvf pio2_3_1.tar.gz && \
+#    rm pio2_3_1.tar.gz && \
+#    mv ParallelIO-pio2_3_1 pio 
+#
+#    WORKDIR /opt/pio/build
+#    RUN cmake -DPIO_ENABLE_FORTRAN=OFF -DCMAKE_C_FLAGS="-fcommon" -DCMAKE_CXX_FLAGS="-fcommon" .. && \
+#        make -j $(nproc) && \
+#        make install
 

@@ -9,7 +9,7 @@ Here we present a docker container that runs on arm processors?
 ## Build
 ### Base CESM 
 Base CESM provides the following packages installed from source code by the maintainers:
-- Fortran-9.5
+- Fortran-11
 - MPI
 - BLAS
 - LAPACK
