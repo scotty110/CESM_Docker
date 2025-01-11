@@ -65,3 +65,5 @@ ENV PATH=${PATH/\/usr\/local\/mpi\/bin:/}
 ENV PATH=/opt/cesm/cime/scripts:$PATH
 WORKDIR /root
 
+# For x86 Uncomment
+ENV LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libgfortran.so.5
